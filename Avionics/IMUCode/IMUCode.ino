@@ -174,3 +174,37 @@ void sensorHealth() { // TO-DO
 void manualCalibration() {
   // Activation for manually calibrating the sensor if needed
 }
+
+void getOrientation() {
+  String orientation[ARRAY_SIZE];
+
+  sensors_event_t event;
+  bno.getEvent(&event);
+
+  orientation[0] = "Roll:";
+  orientation[1] = String((event.orientation.x, 4) - initial[0]);
+  orientation[2] = "Pitch:";
+  orientation[3] = String((event.orientation.y, 4) - initial[1]);
+  orientation[4] = "Yaw:";
+  orientation[5] = String((event.orientation.z, 4) - initial[2]);
+
+  for (int i = 0; i < ARRAY_SIZE; i++) {
+    Serial.print(orientation[i] + " ");
+  }
+  Serial.println();
+}
+
+void getVectors() {
+
+  imu::Quaternion quat = bno.getQuat();
+  imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  Serial.print("Acc"); 
+  imu::Vector<3> gyr = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE); 
+  // Serial.print("Gyr");      
+  imu::Vector<3> gra = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY); 
+  // Serial.print("Gra");       
+  imu::Vector<3> linAccel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+
+  // Serial.println("X: "); 
+  // Serial.print(acc.x());
+}
