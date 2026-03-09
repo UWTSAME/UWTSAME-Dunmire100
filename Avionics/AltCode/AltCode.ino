@@ -240,4 +240,3 @@ Serial.print("Hpa\n");
 Serial.print(GetAlt());
 Serial.print("ft\n");
 }
-//sorry
