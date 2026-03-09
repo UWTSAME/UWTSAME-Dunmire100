@@ -42,12 +42,15 @@ void AltSetup(){
   bmp.configureInterrupt(BMP5XX_INTERRUPT_LATCHED, BMP5XX_INTERRUPT_ACTIVE_HIGH, BMP5XX_INTERRUPT_PUSH_PULL, BMP5XX_INTERRUPT_DATA_READY, true); 
 }
 
-void UpdateAltimeter(){
+bool UpdateAltimeter(){
+  bool returners = false;
   // Check if new data is ready before reading
   if(bmp.dataReady()){
     //If data is ready, updates the state fields of the bmp.
-    bmp.performReading();
+    returners = bmp.performReading();
+
   }
+  return returners;
 } 
 
 float GetTempC(){
@@ -92,9 +95,9 @@ void AltDebug(){
   Serial.print("  First Alt: ");
   Serial.print(firstAlt);
   Serial.print("  Current Alt: ");
-  Serial.print(getAlt());
+  Serial.print(GetAlt());
   Serial.print("  Current temp C");
-  Serial.print(getTempC());
+  Serial.print(GetTempC());
 
 }
 
