@@ -5,7 +5,7 @@
 
 
 const int SEALEVELPRESSURE_HPA (1019.4);
-int firstAlt;
+float firstAlt;
 
 //const int LED_BUILTIN = 2;
 
