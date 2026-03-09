@@ -85,7 +85,7 @@ void VerifyLights(){
 
 //EDIT DEMO
 //EDIT DEMO 2
-//HELLO
+//ORANGE
 void AltDebug(){
   Serial.print("Data Ready:");
   Serial.print(UpdateAltimeter());
