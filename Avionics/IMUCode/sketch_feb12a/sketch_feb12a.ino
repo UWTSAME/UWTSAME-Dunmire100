@@ -49,7 +49,7 @@ void loop(void)
 
   getVectors();
     
-  delay(100);
+  delay(1000);
 
 
 }
@@ -96,15 +96,15 @@ void getVectors() {
 
   imu::Quaternion quat = bno.getQuat();
   imu::Vector<3> acc = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
-  Serial.print("Acc"); 
+  
   imu::Vector<3> gyr = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE); 
   // Serial.print("Gyr");      
   imu::Vector<3> gra = bno.getVector(Adafruit_BNO055::VECTOR_GRAVITY); 
   // Serial.print("Gra");       
   imu::Vector<3> linAccel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
-  // Serial.println("X: "); 
-  // Serial.print(acc.x());
+  Serial.println("X: "); 
+  Serial.print(acc.x());
 }
 
 
