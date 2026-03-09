@@ -82,6 +82,8 @@ void VerifyLights(){
   digitalWrite(LED_BUILTIN, LOW);
 }
 
+
+//EDIT DEMO
 void AltDebug(){
   System.out.print("Data Ready:");
   System.out.print(UpdateAltimeter());
