@@ -87,14 +87,14 @@ void VerifyLights(){
 //EDIT DEMO 2
 //HELLO
 void AltDebug(){
-  System.out.print("Data Ready:");
-  System.out.print(UpdateAltimeter());
-  System.out.print("  First Alt: ");
-  System.out.print(firstAlt);
-  System.out.print("  Current Alt: ");
-  System.out.print(getAlt());
-  System.out.print("  Current temp C");
-  System.out.print(getTempC());
+  Serial.print("Data Ready:");
+  Serial.print(UpdateAltimeter());
+  Serial.print("  First Alt: ");
+  Serial.print(firstAlt);
+  Serial.print("  Current Alt: ");
+  Serial.print(getAlt());
+  Serial.print("  Current temp C");
+  Serial.print(getTempC());
 
 }
 
