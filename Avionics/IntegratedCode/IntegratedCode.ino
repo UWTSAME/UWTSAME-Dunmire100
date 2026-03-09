@@ -4,10 +4,10 @@
 #include "Adafruit_BMP5xx.h"
 
 
-const int SEALEVELPRESSURE_HPA (1000);
+const int SEALEVELPRESSURE_HPA (1019.4);
 int firstAlt;
 
-
+const int LED_BUILTIN = 2;
 
 Adafruit_BMP5xx bmp; // Create BMP5xx object
 //Uses the microcontroller SCL and SDA pins. (For Esp32, it will assume its wired GPIO 21 to SCL and GPIO 22 to SDA)
@@ -18,31 +18,20 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   while (!Serial) delay(10);  // Wait for Serial Monitor to open
   AltSetup();
-  first_alt = FirstAlt(); //Change the method name
+  //Sets the first recorded altitude.
+  firstAlt = GetAlt(); 
 
-}
-
-void AltSetup(){
-  if(!bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire)){
-    while (true) AlertLights();
-  }
 }
 
 void AltSetup(){
     //sets up the functions and presets for the sensor chip
-  Serial.println(F("Adafruit BMP5xx Comprehensive Test!"));
-
   // Try to initialize the sensor
-  // For I2C mode (default):
+  // For I2C mode:
   if (!bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire)) {
-  // For SPI mode (uncomment the line below and comment out the I2C line above):
-  // if (!bmp.begin(BMP5XX_CS_PIN, &SPI)) {
-    Serial.println(F("Could not find a valid BMP5xx sensor, check wiring!"));
-    while (1) delay(10);
+    while (true) AlertLights();
   }
   VerifyLights();
   // Demonstrate all setter functions with range documentation
-  Serial.println(F("=== Setting Up Sensor Configuration ==="));
   bmp.setTemperatureOversampling(BMP5XX_OVERSAMPLING_2X);   //Setting temperature oversampling to 2X
   bmp.setPressureOversampling(BMP5XX_OVERSAMPLING_16X);     //Setting pressure oversampling to 16X
   bmp.setIIRFilterCoeff(BMP5XX_IIR_FILTER_COEFF_3);         //Setting IIR filter to coefficient 3
@@ -53,8 +42,32 @@ void AltSetup(){
   bmp.configureInterrupt(BMP5XX_INTERRUPT_LATCHED, BMP5XX_INTERRUPT_ACTIVE_HIGH, BMP5XX_INTERRUPT_PUSH_PULL, BMP5XX_INTERRUPT_DATA_READY, true); 
 }
 
+void UpdateAltimeter(){
+  // Check if new data is ready before reading
+  if(bmp.dataReady()){
+    //If data is ready, updates the state fields of the bmp.
+    bmp.performReading();
+  }
+} 
 
+float GetTempC(){
+  return bmp.temperature;
+}
+float GetTempF(){
+  return (GetTempC() * (9 / 5) + 32);
+}
 
+float GetPressure(){
+  return bmp.pressure;
+}
+
+float GetAlt(){
+   return bmp.readAltitude(SEALEVELPRESSURE_HPA) * 3.28;
+}
+
+float GetRelAlt(){
+   return bmp.readAltitude(SEALEVELPRESSURE_HPA) * 3.28 - firstAlt;
+}
 
 void AlertLights(){
   digitalWrite(LED_BUILTIN, HIGH);
@@ -69,9 +82,23 @@ void VerifyLights(){
   digitalWrite(LED_BUILTIN, LOW);
 }
 
+void AltDebug(){
+  System.out.print("Data Ready:");
+  System.out.print(UpdateAltimeter());
+  System.out.print("  First Alt: ");
+  System.out.print(firstAlt);
+  System.out.print("  Current Alt: ");
+  System.out.print(getAlt());
+  System.out.print("  Current temp C");
+  System.out.print(getTempC());
+
+}
+
+
+
+
 void loop() {
 
-  
 
 }
 
