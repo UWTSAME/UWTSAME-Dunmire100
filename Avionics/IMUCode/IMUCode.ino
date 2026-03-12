@@ -8,6 +8,7 @@
   
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 Preferences prefs;
+const int TEMP_WARNING_C = 70;  
 
 void setup(void) // Starting conditions and sequence
 {
@@ -20,6 +21,9 @@ void loop(void) // Loop for getting orientation
 {
   // Serial.print(getOrientation()); REMEMBER TO UNCOMMENT THIS ONCE DONE
   delay(100);
+
+  sensorHealth();
+  delay(200);
 }
 
 void ledblink(void) // Method for blinking the LED
@@ -162,8 +166,13 @@ bool loadCalibration() { // Opens flash memory to load stored calibration values
 }
 
 void sensorHealth() { // TO-DO
-  // detect if IC2 connection drops
-  // detect if sensor is overheating
+  dangerSense();
+
+  int tempC = bno.getTemp();
+  if (tempC >= TEMP_WARNING_C) {
+    Serial.print("WARNING: BNO temp high (C): ");
+    Serial.println(tempC);
+  }
   // detect if sensor freezes
   // detect if calibration is still valid
   // detect if sudden impact/movements
@@ -173,6 +182,26 @@ void sensorHealth() { // TO-DO
 
 void manualCalibration() {
   // Activation for manually calibrating the sensor if needed
+}
+
+void dangerSense() {
+  // Check BNO055 internal system status and error codes
+  uint8_t system_status = 0, self_test = 0, system_error = 0;
+  bno.getSystemStatus(&system_status, &self_test, &system_error);
+
+  if (system_error != 0) {
+    Serial.print("BNO055 system error: ");
+    Serial.println(system_error);
+    Serial.println("Attempting re-initialization");
+
+    // Try a simple re-initialization attempt
+    if (!bno.begin()) {
+      Serial.println("Re-init failed.");
+    } else {
+      Serial.println("Re-init OK.");
+      bno.setExtCrystalUse(true); // keep same config after reinit
+    }
+  }
 }
 
 void getOrientation() {
