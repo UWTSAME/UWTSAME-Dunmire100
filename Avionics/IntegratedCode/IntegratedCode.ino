@@ -7,7 +7,7 @@
 const int SEALEVELPRESSURE_HPA (1019.4);
 float firstAlt;
 
-//const int LED_BUILTIN = 2;
+const int LED_BUILTIN = 2;
 
 Adafruit_BMP5xx bmp; // Create BMP5xx object
 //Uses the microcontroller SCL and SDA pins. (For Esp32, it will assume its wired GPIO 21 to SCL and GPIO 22 to SDA)
