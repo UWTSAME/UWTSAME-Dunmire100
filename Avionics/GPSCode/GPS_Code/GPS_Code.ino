@@ -61,6 +61,7 @@ void gpsDebug(){
   bool newInfo = updateGPS();
   Serial.print("Data Ready: ");
   Serial.println(newInfo);
+  //Only displays information if we get new info
   if(newInfo){
     Serial.print(" First Alt: ");
     Serial.print(firstGpsAlt);
@@ -77,3 +78,7 @@ void gpsDebug(){
   }
   delay(1000);
 }
+
+//For the purposes of distance and direction we might need a more advanced gpsDebug function.
+
+
