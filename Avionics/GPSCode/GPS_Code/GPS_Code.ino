@@ -44,14 +44,14 @@ bool updateGPS(){
   bool returner = false;
   while(GPSSerial.available() != 0){
     char gpsOutput = GPSSerial.read();
-    //If the first gps lon hasn't been set it updates all values.
-    //I guess it won't work if you are exactly on the prime meridian.
     if(gps.encode(gpsOutput)){
       gpsLat = gps.location.lat();
       gpsLon = gps.location.lng();
       gpsAlt = gps.altitude.meters();
       returner = true;
     }
+    //If the first gps lon hasn't been set it updates all first values.
+    //I guess it won't work if you are exactly on the prime meridian.
     if(firstGpsLon == 0) setFirstGps();
   }
   return returner;
