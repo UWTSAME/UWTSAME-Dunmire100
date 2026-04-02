@@ -81,4 +81,12 @@ void gpsDebug(){
 
 //For the purposes of distance and direction we might need a more advanced gpsDebug function.
 
+// To-do
+// Parsing GPS data into usable values
+// If needed, unit conversions
+// Calculations of distance based on GPS values
+// If needed, filtering GPS data (related to parsing?)
+// Finding GPS direction
+
+
 
