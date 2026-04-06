@@ -19,10 +19,10 @@ void setup(void) // Starting conditions and sequence
 
 void loop(void) // Loop for getting orientation
 {
-  // Serial.print(getOrientation()); REMEMBER TO UNCOMMENT THIS ONCE DONE
+  Serial.print(getOrientation()); REMEMBER TO UNCOMMENT THIS ONCE DONE
   delay(100);
 
-  sensorHealth();
+  //sensorHealth();
   delay(200);
 }
 
