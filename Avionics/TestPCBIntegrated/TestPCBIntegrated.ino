@@ -17,6 +17,9 @@
 #define TX2 17
 //For the SD card adapter
 #define chip_select 5
+//For the Lora module
+#define TX1 4
+#define RX1 2
 //Assumed Wire assignments from libraries:
 //For the BMP580 and BNO055
 // SCL is set to 21 on ESP32
@@ -55,6 +58,8 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 Preferences prefs;
 //SD card adapter
 File SD_card;
+//Lora
+HardwareSerial LoraSerial(1);
 
 void setup() {
   Serial.begin(115200); //Sets up baud rate to 115200.
@@ -63,6 +68,7 @@ void setup() {
   AltSetup();
   gpsSetup();
   bnoSetup();
+  loraSetup();
 }
 
 void gpsSetup(){
@@ -354,10 +360,66 @@ void sdDebug(){
   SD_card.println("Hello World!");
 }
 
+void loraSetup(){
+  LoraSerial.begin(115200, SERIAL_8N1, RX1, TX1);
+}
+
+bool sendData(String theMessage) {
+  Serial.println("Sending message: " + theMessage);
+  bool returner = false;
+  if (loraStatus()) {
+    String compiledMessage = "AT+SEND=0," + String(theMessage.length()) + "," + theMessage;
+    LoraSerial.println(compiledMessage);
+    returner = true;
+    Serial.println("It worked?");
+  }
+
+  return false;
+}
+
+bool loraStatus() {
+  bool statusGood = false;
+  unsigned long deltaTime = millis();
+  unsigned int attempts = 0;
+  unsigned const int ATTEMPTS_ALLOWED = 5;
+
+  while (ATTEMPTS_ALLOWED > attempts && !statusGood) {
+
+    attempts++;
+    LoraSerial.println("AT");
+
+    delay(200);
+
+    if (LoraSerial.available()) {
+      String response = LoraSerial.readString();
+      Serial.print("Module says: ");
+      Serial.println(response);
+
+      if (response.indexOf("+OK") != -1) {
+        statusGood = true;
+      }
+    }
+  }
+
+  return statusGood;
+}
+
+void loraDebug(){
+  Serial.println(loraStatus());
+  Serial.println(sendData("Hello"));
+
+  if (sendData("Hello")) {
+    Serial.println("Success");
+  } else {
+    Serial.println("failure");
+  }
+}
+
 void loop() {
   AltDebug();
   gpsDebug();
   bnoDebug();
   sdDebug();
+  delay(1000);
 }
 
