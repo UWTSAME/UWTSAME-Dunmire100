@@ -351,7 +351,7 @@ void sdSetup(){
 }
 
 void sdDebug(){
-  SD_crd.println("Hello World!");
+  SD_card.println("Hello World!");
 }
 
 void loop() {
