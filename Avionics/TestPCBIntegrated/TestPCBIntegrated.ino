@@ -7,14 +7,21 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 #include <Preferences.h>
+#include <SD.h>
+#include <SPI.h>
 
 //Wire assignments:
 #define LED_BUILTIN 2
+//For the GPS
 #define RX2 16
 #define TX2 17
+//For the SD card adapter
+#define chip_select 5
 //Assumed Wire assignments from libraries:
+//For the BMP580 and BNO055
 // SCL is set to 21 on ESP32
 // SDA is set to 22 on ESP32
+
 
 /*******Global variables*********/
 //Gps
@@ -27,6 +34,10 @@ float firstGpsAlt = 0;
 //Altimeter
 const int SEALEVELPRESSURE_HPA (1019.4);
 float firstAlt;
+//SD card adapter
+bool THISISDUMB = false;
+int folderNum = 0;
+String folderPath = "";
 
 /*******Global constants*********/
 //IMU
@@ -42,6 +53,8 @@ TinyGPSPlus gps;
 //IMU
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 Preferences prefs;
+//SD card adapter
+File SD_card;
 
 void setup() {
   Serial.begin(115200); //Sets up baud rate to 115200.
@@ -318,11 +331,33 @@ void saveCalibration() { // Reads and stores calibration values
   Serial.println("Calibration saved.");
 }
 
+void folderMaker() {
+  while (true) {
+    folderPath = "/" + String(folderNum);
+
+    if (!SD.exists(folderPath)) {
+      SD.mkdir(folderPath);
+      break;
+    }
+    folderNum++;
+  }
+}
+
+void sdSetup(){
+  SD.begin(chip_select);                                          // initializes SD card reader
+  folderMaker();                                                  // calls the function to gernate a folder in the SD card
+  SD_card = SD.open("/" + folderPath + "/Data.txt", FILE_WRITE);  // Creates a text file in the new folder where the data will be stored.
+  Serial.print("GO");
+}
+
+void sdDebug(){
+  SD_crd.println("Hello World!");
+}
 
 void loop() {
   AltDebug();
   gpsDebug();
   bnoDebug();
-
+  sdDebug();
 }
 
