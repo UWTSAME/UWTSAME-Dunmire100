@@ -11,7 +11,7 @@
 #include <SPI.h>
 
 //Wire assignments:
-#define LED_BUILTIN 2
+#define LED_BUILTIN 12
 //For the GPS
 #define RX2 16
 #define TX2 17
@@ -64,10 +64,16 @@ HardwareSerial LoraSerial(1);
 void setup() {
   Serial.begin(115200); //Sets up baud rate to 115200.
   pinMode(LED_BUILTIN, OUTPUT);
+  Wire.begin();
+  delay(200);
   while (!Serial) delay(10);  // Wait for Serial Monitor to open
+  Serial.println("starting alt");
   AltSetup();
+  Serial.println("starting gps");
   gpsSetup();
+  Serial.println("starting bno");
   bnoSetup();
+  Serial.println("starting lora");
   loraSetup();
 }
 
@@ -79,8 +85,11 @@ void AltSetup(){
     //sets up the functions and presets for the sensor chip
   // Try to initialize the sensor
   // For I2C mode:
-  if (!bmp.begin(BMP5XX_ALTERNATIVE_ADDRESS, &Wire)) {
-    while (true) AlertLights();
+  if (!bmp.begin(0x47, &Wire)) {
+    while (true){
+      AlertLights();
+      Serial.println("help");
+    } 
   }
   VerifyLights();
   // Demonstrate all setter functions with range documentation
@@ -228,13 +237,14 @@ void bnoSetup() {
 
   delay(250);
 
-  if (!loadCalibration()) {
+ /* if (!loadCalibration()) {
         if (doCalibration()) {  // Return true if calibration completed
             saveCalibration();
         } else { // Otherwise say that calibration failed
             Serial.println("Calibration failed or timed out.");
         }
     }
+    */
 }
 
 void bnoDebug(){
@@ -416,9 +426,13 @@ void loraDebug(){
 }
 
 void loop() {
+  Serial.println("getting alt");
   AltDebug();
+  Serial.println("getting gps");
   gpsDebug();
+  Serial.println("getting bno");
   bnoDebug();
+  Serial.println("doing sd");
   sdDebug();
   delay(1000);
 }
