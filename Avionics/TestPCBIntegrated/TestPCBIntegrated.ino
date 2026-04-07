@@ -19,7 +19,7 @@
 #define chip_select 5
 //For the Lora module
 #define TX1 4
-#define RX1 2
+#define RX1 15
 //Assumed Wire assignments from libraries:
 //For the BMP580 and BNO055
 // SCL is set to 22 on ESP32
@@ -65,7 +65,7 @@ void setup() {
   Serial.begin(115200); //Sets up baud rate to 115200.
   pinMode(LED_BUILTIN, OUTPUT);
   Wire.begin();
-  delay(200);
+  delay(500);
   while (!Serial) delay(10);  // Wait for Serial Monitor to open
   Serial.println("starting alt");
   AltSetup();
@@ -75,6 +75,7 @@ void setup() {
   bnoSetup();
   Serial.println("starting lora");
   loraSetup();
+  sdSetup();
 }
 
 void gpsSetup(){
@@ -368,6 +369,8 @@ void sdSetup(){
 
 void sdDebug(){
   SD_card.println("Hello World!");
+  SD_card.close(); // closes and saves all data to the SD card
+  SD_card = SD.open("/" + folderPath + "/Data.txt", FILE_WRITE);
 }
 
 void loraSetup(){
@@ -434,6 +437,6 @@ void loop() {
   bnoDebug();
   Serial.println("doing sd");
   sdDebug();
-  delay(1000);
+  delay(10000);
 }
 
