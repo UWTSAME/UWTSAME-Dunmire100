@@ -11,9 +11,9 @@
 #include <SPI.h>
 
 //Wire assignments:
-#define LED_BUILTIN 2
+#define LED_BUILTIN 12
 //For the GPS
-#define RX2 16
+#define RX2 16 
 #define TX2 17
 //For the SD card adapter
 #define chip_select 5
@@ -22,8 +22,8 @@
 #define RX1 2
 //Assumed Wire assignments from libraries:
 //For the BMP580 and BNO055
-// SCL is set to 21 on ESP32
-// SDA is set to 22 on ESP32
+// SCL is set to 22 on ESP32
+// SDA is set to 21 on ESP32
 
 
 /*******Global variables*********/
