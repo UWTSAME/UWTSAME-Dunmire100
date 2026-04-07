@@ -29,7 +29,6 @@ void loop(void) // Loop for getting orientation
   unsigned long start = millis();
 
   getOrientation(); // Runs and prints all orientation data
-  checkSerialCommands(); // for manual calibration
   sensorHealth(); // Checks sensor health features
 
   // Runs a 20 ms loop 
@@ -166,27 +165,6 @@ void sensorHealth() { // Sensor health features
   }
 }
 
-void manualCalibration() { // For manually starting calibration
-    Serial.println("Starting manual calibration...");
-    if (doCalibration()) {  // Run normal calibration
-        saveCalibration();  // Save offsets if successful
-        Serial.println("Manual calibration complete and saved.");
-    } else {
-        Serial.println("Manual calibration failed or timed out.");
-    }
-}
-
-void checkSerialCommands() { // Check serial commands for manual calibration
-    if (Serial.available()) {
-        String cmd = Serial.readStringUntil('\n');
-        cmd.trim(); // Remove whitespace/newline
-
-        if (cmd.equalsIgnoreCase("calibration")) {
-            manualCalibration(); // Manual call calibration
-        }
-    }
-}
-
 void dangerSense() { // Checking for system errors
   uint8_t system_status = 0, self_test = 0, system_error = 0; // Read system status
   bno.getSystemStatus(&system_status, &self_test, &system_error);
@@ -305,11 +283,11 @@ void velocityUpdate(float ax, float ay, float az, float dt) {
   velY += ay * dt;
   velZ += az * dt;
 
-  if (!launched && fabsf(ax) < 0.05f && fabsf(ay) < 0.05f && fabsf(az) < 0.05f) {
-    velX = 0;
-    velY = 0;
-    velZ = 0;
-  }
+  if (!launched) {
+  velX = 0;
+  velY = 0;
+  velZ = 0;
+  } 
 }
 
 // Output of orientation data printed
