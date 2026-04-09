@@ -7,8 +7,8 @@
 #define LED_BUILTIN 2 // Built in LED pin
 
   
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
-Preferences prefs;
+Adafruit_BNO055 bno = Adafruit_BNO055(55); // BNO055 IMU Object
+Preferences prefs; // Storage handler
 const int TEMP_WARNING_C = 70; // Temperature threshold
 float velX = 0, velY = 0, velZ = 0; // Velocity estimates
 bool launched = false; // Launch detection flag
@@ -18,10 +18,10 @@ float filteredAx = 0, filteredAy = 0, filteredAz = 0;
 void setup(void) // Starting conditions and sequence
 {
   Serial.begin(115200);
-  Wire.begin();
-  Wire.setClock(100000);  // Runs 100 kHz instead of 400 kHz
-  pinMode(LED_BUILTIN, OUTPUT);
-  bnoSetup();
+  Wire.begin(); // Initiate I2C
+  Wire.setClock(100000);  // Set 100kHz
+  pinMode(LED_BUILTIN, OUTPUT); // LED output
+  bnoSetup(); // Start the BNO055
 }
 
 void loop(void) // Loop for getting orientation
@@ -32,12 +32,15 @@ void loop(void) // Loop for getting orientation
   sensorHealth(); // Checks sensor health features
 
   // Runs a 20 ms loop 
-  delay(20 - (millis() - start));
+  unsigned long elapsed = millis() - start;
+  if (elapsed < 20) {
+    delay(20 - elapsed);
+  }
 }
 
 void ledblink(void) // Method for blinking the LED
 {
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 10; i++) { // 10 blinks in succesion
     digitalWrite(LED_BUILTIN, HIGH);
     delay(100);
     digitalWrite(LED_BUILTIN, LOW);
@@ -61,14 +64,14 @@ void bnoSetup() {
 
   // Message displayed when BNO055 is connected
   Serial.println("The BNO055 has been detected. ");
-  ledblink();
+  ledblink(); // ESP32 LED blinks when detected
     
   bno.setExtCrystalUse(true);
 
   delay(250);
 
   if (!loadCalibration()) {
-        if (doCalibration()) {  // Return true if calibration completed
+        if (doCalibration()) {  // Save if calibration completed
             saveCalibration();
         } else { // Otherwise say that calibration failed
             Serial.println("Calibration failed or timed out.");
@@ -78,9 +81,9 @@ void bnoSetup() {
 
 bool doCalibration() // For doing sensor calibration
 {
-  uint8_t system = 0, gyro = 0, accel = 0, mag = 0;
-  unsigned long startTime = millis();
-  const unsigned long timeout = 90000;
+  uint8_t system = 0, gyro = 0, accel = 0, mag = 0; // Start values
+  unsigned long startTime = millis(); // Start timer
+  const unsigned long timeout = 90000; // Timeout limit
   bool timedOut = false; 
 
   bool systemDone = false;
@@ -131,21 +134,20 @@ bool doCalibration() // For doing sensor calibration
 
 void saveCalibration() { // Reads and stores calibration values
   adafruit_bno055_offsets_t offsets;
-  bno.getSensorOffsets(offsets);
-  prefs.begin("bno", false);
-  // Saves to ESP32 flash memory
-  prefs.putBytes("offsets", &offsets, sizeof(offsets));
-  prefs.end();
+  bno.getSensorOffsets(offsets); // Get current offset
+  prefs.begin("bno", false); // Open NVS write
+  prefs.putBytes("offsets", &offsets, sizeof(offsets)); // Saves to ESP32 flash memory
+  prefs.end(); // Close NVS write
   Serial.println("Calibration saved.");
 }
 
 bool loadCalibration() { // Opens flash memory to load stored calibration values
   adafruit_bno055_offsets_t offsets;
-  prefs.begin("bno", true);
+  prefs.begin("bno", true); // Open NVS read
   if (prefs.getBytesLength("offsets") == sizeof(offsets)) {
-    prefs.getBytes("offsets", &offsets, sizeof(offsets));
-    prefs.end();
-    bno.setSensorOffsets(offsets);
+    prefs.getBytes("offsets", &offsets, sizeof(offsets)); // Read data
+    prefs.end(); // Close NVS read
+    bno.setSensorOffsets(offsets); // Apply offsets
     Serial.println("Calibration restored.");
     return true;
   }
@@ -159,15 +161,15 @@ void sensorHealth() { // Sensor health features
 
   // Detect if high sensor temperature
   int tempC = bno.getTemp();
-  if (tempC >= TEMP_WARNING_C) {
+  if (tempC >= TEMP_WARNING_C) { // Print if above temp threshold
     Serial.print("WARNING: IMU temp high (C): ");
     Serial.println(tempC);
   }
 }
 
 void dangerSense() { // Checking for system errors
-  uint8_t system_status = 0, self_test = 0, system_error = 0; // Read system status
-  bno.getSystemStatus(&system_status, &self_test, &system_error);
+  uint8_t system_status = 0, self_test = 0, system_error = 0; 
+  bno.getSystemStatus(&system_status, &self_test, &system_error); // Read system status
 
   if (system_error != 0) { // Note errors if there are any
     Serial.print("BNO055 system error: ");
@@ -180,17 +182,17 @@ void dangerSense() { // Checking for system errors
       } else {
     Serial.println("Re-init OK.");
     bno.setExtCrystalUse(true);
-    loadCalibration();
+    loadCalibration(); // Reload offsets
     }
-    }
+  }
 }
 
 void getOrientation() { // Getting all different datas for sensor orientation
 
   // For measuring loop time
-  static unsigned long lastTime = millis(); 
+  static unsigned long lastTime = millis(); // Loop timer
   unsigned long currentTime = millis();
-  float dt = (currentTime - lastTime) / 1000.0;
+  float dt = (currentTime - lastTime) / 1000.0; // Delta time
   lastTime = currentTime;
 
   // Float values of measured data
@@ -209,19 +211,14 @@ void getOrientation() { // Getting all different datas for sensor orientation
   rawAccel.y() * rawAccel.y() + rawAccel.z() * rawAccel.z());
 
   filterAcceleration(ax, ay, az); // Filters linear acceleration
-
   detectLaunch(rawAccelMag); // Detects when it launches
-
-  // Updates the velocity values
-  velocityUpdate(filteredAx, filteredAy, filteredAz, dt);
-
-  // Prints all measured values
-  output(currentTime, roll, pitch, yaw, ax, ay, az, gx, gy, gz);
+  velocityUpdate(filteredAx, filteredAy, filteredAz, dt); // Updates the velocity values
+  output(currentTime, roll, pitch, yaw, ax, ay, az, gx, gy, gz); // Prints all measured values
 }
 
 void filterAcceleration(float ax, float ay, float az) {
   // For filtering linear acceleration values
-  float alpha = 0.5f;
+  float alpha = 0.5f; // Smoothing factor
   filteredAx = alpha * ax + (1 - alpha) * filteredAx;
   filteredAy = alpha * ay + (1 - alpha) * filteredAy;
   filteredAz = alpha * az + (1 - alpha) * filteredAz;
@@ -234,19 +231,20 @@ void detectLaunch(float rawAccelMag) { // For detecting rocket launch
     if (rawAccelMag > 25.0f) {
       // Detect if raw acceleration magnitude is above value for launch
       launchHits++;
-      if (launchHits >= 3) {
+      if (launchHits >= 3) { // If launch threshold exceeded
         launched = true;
         Serial.println("LAUNCH DETECTED");
-      } // Print if above acceleration threshold for 3+ loops
+        // Reset filter velocity at launch moment
+        filteredAx = filteredAy = filteredAz = 0;
+        velX = velY = velZ = 0;
+      }
     } else {
       launchHits = 0;
     }
   }
 }
 
-/**
-* Reads gyroscope data. (rad/s)
-*/
+// Reads gyroscope data. (rad/s)
 void getGyro(float &gx, float &gy, float &gz) {
   imu::Vector<3> gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
@@ -256,9 +254,7 @@ void getGyro(float &gx, float &gy, float &gz) {
 
 }
 
-/**
-* Reads linear acceleration.
-*/
+// Reads linear acceleration
 void getLinAcc(float &ax, float &ay, float &az) {
   imu::Vector<3> accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
@@ -268,7 +264,7 @@ void getLinAcc(float &ax, float &ay, float &az) {
 }
 
 // Fuses orientation results
-void orientation(float &roll, float &pitch, float &yaw) {
+void orientation(float &roll, float &pitch, float &yaw) { // Orientation read
   sensors_event_t orientationData;
   bno.getEvent(&orientationData);
 
@@ -279,11 +275,11 @@ void orientation(float &roll, float &pitch, float &yaw) {
 
 // Helps to integrate the velocity
 void velocityUpdate(float ax, float ay, float az, float dt) {
-  velX += ax * dt;
+  velX += ax * dt; // Velocity calculations
   velY += ay * dt;
   velZ += az * dt;
 
-  if (!launched) {
+  if (!launched) { // Reset values if not launched
   velX = 0;
   velY = 0;
   velZ = 0;
@@ -301,5 +297,8 @@ void output(unsigned long time,  float roll, float pitch, float yaw, float ax, f
   Serial.print(az); Serial.print(",");
   Serial.print(velX); Serial.print(",");
   Serial.print(velY); Serial.print(",");
-  Serial.println(velZ);
+  Serial.print(velZ); Serial.print(",");
+  Serial.print(gx); Serial.print(",");
+  Serial.print(gy); Serial.print(",");
+  Serial.println(gz); 
 }
