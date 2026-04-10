@@ -2,16 +2,17 @@
 #define RX1 16
 #define TX1 17
 
-HardwareSerial LoraSerial(2);
+HardwareSerial LoraSerial(1);
 
 void setup() {
   Serial.begin(115200);
 
   while (!Serial) delay(10);
 
-  LoraSerial.begin(115200, SERIAL_8N1, RX1, TX1);
+  LoraSerial.begin(115200, SERIAL_8N1, RX1,TX1 );
+  delay(1000);
 
-  Serial.print("Ok we are starting off good?");
+  Serial.println("Setup Complete");
 }
 
 void loop() {

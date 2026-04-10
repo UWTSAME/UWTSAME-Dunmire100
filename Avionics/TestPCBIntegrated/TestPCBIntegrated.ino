@@ -13,7 +13,7 @@
 //Wire assignments:
 #define LED_BUILTIN 12
 //For the GPS
-#define RX2 16 
+#define RX2 16 //IS 16
 #define TX2 17
 //For the SD card adapter
 #define chip_select 5
@@ -350,7 +350,7 @@ void saveCalibration() { // Reads and stores calibration values
 
 void folderMaker() {
   while (true) {
-    folderPath = "/" + String(folderNum);
+    folderPath = String(folderNum);
 
     if (!SD.exists(folderPath)) {
       SD.mkdir(folderPath);
@@ -437,6 +437,8 @@ void loop() {
   bnoDebug();
   Serial.println("doing sd");
   sdDebug();
+  Serial.println("Lora debugging now!");
+  loraDebug();
   delay(10000);
 }
 
