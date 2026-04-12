@@ -4,7 +4,7 @@ SdCard::SdCard(){
 }
 
 bool SdCard::begin(){
-  bool setupSuccessful = false;
+  bool setupSuccessful = true;
   if(!SD.begin()) {
     return false;
   }
@@ -22,19 +22,19 @@ bool SdCard::begin(){
 
 void SdCard::folderMaker(){
   while (true) {
-    folderPath = "/" + String(folderNum);
+    myFolderPath = "/" + String(myFolderNum);
 
-    if (!SD.exists(folderPath)) {
-      SD.mkdir(folderPath);
+    if (!SD.exists(myFolderPath)) {
+      SD.mkdir(myFolderPath);
       break;
     }
-    folderNum++;
+    myFolderNum++;
   }
 }
 
 bool SdCard::write(String theMessage){
   bool sentStatus = false;
-  File dataText = SD.open(myFolderPath + "/Data.txt", FILE_WRITE);
+  File dataText = SD.open(myFolderPath + "/Data.txt", FILE_APPEND);
   if(dataText) {
     dataText.println(theMessage);
     dataText.flush();

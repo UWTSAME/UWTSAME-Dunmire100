@@ -1,6 +1,6 @@
 #include "Altimeter.h"
 #include "Gps.h"
-#include "Imu.h"
+#include "BnoSensor.h"
 #include "Lora.h"
 #include "SdCard.h"
 
@@ -12,15 +12,15 @@
 const float SEA_LEVEL_PRESSURE_HPA = 1019.4;
 
 Altimeter alt(SEA_LEVEL_PRESSURE_HPA);
-Gps gps(GspRX, GpsTX);
-Imu imu;
+Gps gps(GpsRX, GpsTX);
+BnoSensor theBno;
 Lora lora(LoraRX, LoraTX);
 SdCard sd;
 
 void setup(){
   Serial.begin(115200);
 
-  if(!alt.setup()){
+  if(!alt.begin()){
     Serial.println("Altimeter setup failed");
   }
 
@@ -28,7 +28,7 @@ void setup(){
     Serial.println("GPS setup failed");
   }
 
-  if(!imu.begin()){
+  if(!theBno.begin()){
     Serial.println("IMU setup failed");
   }
 
@@ -36,7 +36,7 @@ void setup(){
     Serial.println("Lora setup failed");
   }
 
-  if(!sdLog.begin()){
+  if(!sd.begin()){
     Serial.println("SD card setup failed");
   }
 }
@@ -47,11 +47,11 @@ void loop(){
 
   Serial.println(alt.getAlt());
   Serial.println(gps.getAlt());
-  Serial.println(imu.getOrientationX());
+  Serial.println(theBno.getOrientationX());
   Serial.println(lora.status());
   Serial.println(sd.write("Hello World!"));
 
-  delay(20);
+  delay(2000);
 }
 
 

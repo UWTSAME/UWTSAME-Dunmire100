@@ -1,11 +1,13 @@
 #ifndef LORA_H
 #define LORA_H
 
+#include <Arduino.h>
+
 class Lora {
   private:
     int myRX;
     int myTX;
-    HardwareSerial LoraSerial(1);
+    HardwareSerial LoraSerial;
 
   public:
     Lora(int theRX, int theTX);

@@ -1,12 +1,12 @@
 #include "Lora.h"
 
-Lora::Lora(int theRX, int theTX): myRX(theRX), myTX(theTX){
+Lora::Lora(int theRX, int theTX): LoraSerial(1), myRX(theRX), myTX(theTX){
 }
 
 bool Lora::begin(){
   LoraSerial.begin(115200, SERIAL_8N1, myRX, myTX);
   delay(500);
-  return (LoraSerial.availabel() > 0);
+  return (LoraSerial.available() > 0);
 }
 
 bool Lora::sendData(String theMessage){
@@ -15,9 +15,10 @@ bool Lora::sendData(String theMessage){
     String compiledMessage = "AT+SEND=0," + String(theMessage.length()) + "," + theMessage;
     LoraSerial.println(compiledMessage);
     returner = true;
+  }
 }
 
-bool Lora::Status(){
+bool Lora::status(){
   bool status = false;
   unsigned long deltaTime = millis();
   unsigned int attempts = 0;
@@ -37,6 +38,5 @@ bool Lora::Status(){
       }
     }
   }
-
   return status;
 }

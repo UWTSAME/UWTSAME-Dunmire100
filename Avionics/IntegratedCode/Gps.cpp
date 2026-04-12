@@ -1,6 +1,6 @@
 #include "Gps.h"
 
-Gps::Gps(int theRX, int theTX) : myRX(theRX), myTX(theTX){
+Gps::Gps(int theRX, int theTX) : GPSSerial(2), myRX(theRX), myTX(theTX){
 }
 
 bool Gps::begin(){
@@ -15,18 +15,18 @@ void Gps::setFirst(){
   myInitialAlt = myAlt;
 }
 
-void Gps::update(){
+bool Gps::update(){
   bool updateSuccessful = false;
   while(GPSSerial.available() != 0) {
     char gpsOutput = GPSSerial.read();
-    if(gps.encode(gpsOutput)){
+    if(myTinyGps.encode(gpsOutput)){
       myLon = myTinyGps.location.lat();
       myLat = myTinyGps.location.lng();
       myAlt = myTinyGps.altitude.meters();
       updateSuccessful = true;
     }
     for(int i = 0; i < BEGINNING_SAMPLE; i++){
-      setFirstGps();
+      setFirst();
     }
   }
   return updateSuccessful;

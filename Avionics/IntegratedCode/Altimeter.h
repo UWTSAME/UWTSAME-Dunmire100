@@ -1,6 +1,7 @@
 #ifndef ALTIMETER_H 
 #define ALTIMETER_H
 
+#include <Arduino.h>
 #include <Adafruit_BMP5xx.h>
 #include <Wire.h>
 

@@ -1,11 +1,12 @@
 #ifndef GPS_H
 #define GPS_H
 
+#include <Arduino.h>
 #include <TinyGPSPlus.h>
 
 class Gps {
   private:
-    HardwareSerial GPSSerial(2);
+    HardwareSerial GPSSerial;
     TinyGPSPlus myTinyGps;
     int myRX;
     int myTX;
@@ -20,9 +21,9 @@ class Gps {
   public:
     Gps(int theRX, int theTX);
 
-    void begin();
+    bool begin();
     void setFirst();
-    void update();
+    bool update();
     float getLat();
     float getLon();
     float getAlt();

@@ -8,7 +8,7 @@ Altimeter::Altimeter(): mySeaPressure(1013.25), myInitialAlt(0){
 
 bool Altimeter::begin(){
   bool setupSuccessful = false;
-  if(!myBmp.begin_I2C(0x47, &Wire)) {
+  if(!myBmp.begin(0x47, &Wire)) {
     return setupSuccessful;
   }
   setupSuccessful = true;

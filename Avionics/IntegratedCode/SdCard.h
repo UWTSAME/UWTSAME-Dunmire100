@@ -1,6 +1,7 @@
 #ifndef SDCARD_H
 #define SDCARD_H
 
+#include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <SD.h>

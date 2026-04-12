@@ -1,9 +1,9 @@
-#include "Imu.h"
+#include "BnoSensor.h"
 
-Imu::Imu(){
+BnoSensor::BnoSensor(){
 }
 
-bool Imu::begin(){
+bool BnoSensor::begin(){
   if(!myBno.begin()) {
     return false;
   }
@@ -15,7 +15,7 @@ bool Imu::begin(){
   return true;
 }
 
-bool Imu::loadCalibration() { // Opens flash memory to load stored calibration values
+bool BnoSensor::loadCalibration() { // Opens flash memory to load stored calibration values
   adafruit_bno055_offsets_t offsets;
   myPrefs.begin("bno", true);
   if (myPrefs.getBytesLength("offsets") == sizeof(offsets)) {
@@ -29,7 +29,7 @@ bool Imu::loadCalibration() { // Opens flash memory to load stored calibration v
   return false;
 }
 
-bool Imu::doCalibration() // For doing sensor calibration
+bool BnoSensor::doCalibration() // For doing sensor calibration
 {
   uint8_t system = 0, gyro = 0, accel = 0, mag = 0;
   unsigned long startTime = millis();
@@ -87,7 +87,7 @@ bool Imu::doCalibration() // For doing sensor calibration
   return false;
 }
 
-void Imu::saveCalibration() { // Reads and stores calibration values
+bool BnoSensor::saveCalibration() { // Reads and stores calibration values
   adafruit_bno055_offsets_t offsets;
   myBno.getSensorOffsets(offsets);
   myPrefs.begin("bno", false);
@@ -95,21 +95,21 @@ void Imu::saveCalibration() { // Reads and stores calibration values
   myPrefs.end();
 }
 
-float Imu::getOrientationX(){
+float BnoSensor::getOrientationX(){
   sensors_event_t event;
   myBno.getEvent(&event);
 
   return event.orientation.x;
 }
 
-float Imu::getOrientationY(){
+float BnoSensor::getOrientationY(){
   sensors_event_t event;
   myBno.getEvent(&event);
 
   return event.orientation.y;
 }
 
-float Imu::getOrientationZ(){
+float BnoSensor::getOrientationZ(){
   sensors_event_t event;
   myBno.getEvent(&event);
 
