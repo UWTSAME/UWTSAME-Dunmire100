@@ -8,6 +8,8 @@
 #define GpsTX 17
 #define LoraRX 15
 #define LoraTX 4
+#define LED_VERIFY 26
+#define LED_ALERT 12
 
 const float SEA_LEVEL_PRESSURE_HPA = 1019.4;
 
@@ -20,9 +22,10 @@ SdCard sd;
 void setup(){
   Serial.begin(115200);
 
-  if(!alt.begin()){
-    Serial.println("Altimeter setup failed");
-  }
+  pinMode(LED_VERIFY, OUTPUT);
+  pinMode(LED_ALERT, OUTPUT);
+
+  alt.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
 
   if(!gps.begin()){
     Serial.println("GPS setup failed");
@@ -54,7 +57,12 @@ void loop(){
   delay(2000);
 }
 
-
+void flashLED(int pinNum){
+  digitalWrite(pinNum, HIGH);
+  delay(500);
+  digitalWrite(pinNum, LOW);
+  delay(500);
+}
 
 
 
