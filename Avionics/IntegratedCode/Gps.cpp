@@ -1,0 +1,54 @@
+#include "Gps.h"
+
+Gps::Gps(int theRX, int theTX) : myRX(theRX), myTX(theTX){
+}
+
+bool Gps::begin(){
+  GPSSerial.begin(9600, SERIAL_8N1, myRX, myTX);
+  delay(500);
+  return (GPSSerial.available() > 0);
+}
+
+void Gps::setFirst(){
+  myInitialLon = myLon;
+  myInitialLat = myLat;
+  myInitialAlt = myAlt;
+}
+
+void Gps::update(){
+  bool updateSuccessful = false;
+  while(GPSSerial.available() != 0) {
+    char gpsOutput = GPSSerial.read();
+    if(gps.encode(gpsOutput)){
+      myLon = myTinyGps.location.lat();
+      myLat = myTinyGps.location.lng();
+      myAlt = myTinyGps.altitude.meters();
+      updateSuccessful = true;
+    }
+    for(int i = 0; i < BEGINNING_SAMPLE; i++){
+      setFirstGps();
+    }
+  }
+  return updateSuccessful;
+}
+
+float Gps::getLat(){
+  return myLat;
+}
+
+float Gps::getLon(){
+  return myLon;
+}
+
+float Gps::getAlt(){
+  return myAlt;
+}
+
+//Need to bring in Leah's methods (hopefully I spelt her name right, prolly not)
+float Gps::getDistance(){
+  return 55.5;
+}
+
+float Gps::getDirection(){
+  return 55.5;
+}
