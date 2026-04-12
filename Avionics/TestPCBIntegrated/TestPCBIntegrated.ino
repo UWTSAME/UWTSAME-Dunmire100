@@ -350,7 +350,7 @@ void saveCalibration() { // Reads and stores calibration values
 
 void folderMaker() {
   while (true) {
-    folderPath = String(folderNum);
+    folderPath = "/" + String(folderNum);
 
     if (!SD.exists(folderPath)) {
       SD.mkdir(folderPath);
@@ -361,16 +361,24 @@ void folderMaker() {
 }
 
 void sdSetup(){
-  SD.begin(chip_select);                                          // initializes SD card reader
+  if (!SD.begin(chip_select)) {
+    Serial.println("SD Card initialization failed!");
+    return;
+  }                                        
   folderMaker();                                                  // calls the function to gernate a folder in the SD card
-  SD_card = SD.open("/" + folderPath + "/Data.txt", FILE_WRITE);  // Creates a text file in the new folder where the data will be stored.
-  Serial.print("GO");
+  SD_card = SD.open(folderPath + "/Data.txt", FILE_WRITE);  // Creates a text file in the new folder where the data will be stored.
+  if (SD_card) {
+    Serial.println("SD File opened successfully!");
+  } else {
+    Serial.println("Error opening Data.txt");
+  }
+
 }
 
 void sdDebug(){
+  SD_card = SD.open(folderPath + "/Data.txt", FILE_WRITE);
   SD_card.println("Hello World!");
-  SD_card.close(); // closes and saves all data to the SD card
-  SD_card = SD.open("/" + folderPath + "/Data.txt", FILE_WRITE);
+  SD_card.flush();
 }
 
 void loraSetup(){
