@@ -17,6 +17,7 @@ class Gps {
     float myInitialLat = 0.0;
     float myInitialAlt = 0.0;
     const int BEGINNING_SAMPLE = 5;
+    bool firstSet = false;
 
   public:
     Gps(int theRX, int theTX);
