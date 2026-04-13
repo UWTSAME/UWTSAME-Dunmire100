@@ -20,8 +20,6 @@ bool Gps::update(){
   while(GPSSerial.available() != 0) {
     char gpsOutput = GPSSerial.read();
     if(myTinyGps.encode(gpsOutput)){
-      myAlt = myTinyGps.altitude.meters();
-      updateSuccessful = true;
       if(myTinyGps.location.isValid() && myTinyGps.location.isUpdated()){
         myLon = myTinyGps.location.lng();
         myLat = myTinyGps.location.lat();
