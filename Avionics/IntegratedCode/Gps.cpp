@@ -47,8 +47,7 @@ float Gps::getLon(){
 float Gps::getAlt(){
   return myAlt;
 }
-
-//Need to bring in Leah's methods (hopefully I spelt her name right, prolly not)
+// put Leeah's code
 float Gps::getDistance(){
   return 55.5;
 }
