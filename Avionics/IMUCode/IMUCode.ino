@@ -71,74 +71,8 @@ void bnoSetup() {
   delay(250);
 
   if (!loadCalibration()) {
-        if (doCalibration()) {  // Save if calibration completed
-            saveCalibration();
-        } else { // Otherwise say that calibration failed
-            Serial.println("Calibration failed or timed out.");
-        }
-    }
-}
-
-bool doCalibration() // For doing sensor calibration
-{
-  uint8_t system = 0, gyro = 0, accel = 0, mag = 0; // Start values
-  unsigned long startTime = millis(); // Start timer
-  const unsigned long timeout = 90000; // Timeout limit
-  bool timedOut = false; 
-
-  bool systemDone = false;
-  bool gyroDone = false;
-  bool accelDone = false;
-  bool magDone = false;
-
-  // Prints values until they reach 3
-  while ((system < 3) || (gyro < 3) || (accel < 3) || (mag < 3)) {
-
-    bno.getCalibration(&system, &gyro, &accel, &mag); 
-
-    Serial.print("System: "); // Depends on other factors
-    Serial.println(system);
-    Serial.print("Gyro: "); // Leave sensor still for a bit
-    Serial.println(gyro);
-    Serial.print("Accel: "); // Slowly tilt sensor in different directions
-    Serial.println(accel);
-    Serial.print("Mag: "); // Slowly rotate sensor in a figure-8
-    Serial.println(mag);
-
-    delay(100);
-
-    // Blinks when all values are calibrated
-    if (system == 3 && gyro == 3 && accel == 3 && mag == 3) {
-            Serial.println("All calibration components complete.");
-            ledblink();  
-            return true;
-        }
-
-    // Times out if calibration takes longer than 90 seconds
-    if (millis() - startTime > timeout) {
-      Serial.println("Calibration timeout reached.");
-      timedOut = true;
-      break;
-    }
+    Serial.println("WARNING: No calibration found!");
   }
-
-  // Finishes the calibration and blinks
-  if (!timedOut) {
-    Serial.println("The calibration has finished.");
-    ledblink();
-    return true;
-  }
-
-  return false;
-}
-
-void saveCalibration() { // Reads and stores calibration values
-  adafruit_bno055_offsets_t offsets;
-  bno.getSensorOffsets(offsets); // Get current offset
-  prefs.begin("bno", false); // Open NVS write
-  prefs.putBytes("offsets", &offsets, sizeof(offsets)); // Saves to ESP32 flash memory
-  prefs.end(); // Close NVS write
-  Serial.println("Calibration saved.");
 }
 
 bool loadCalibration() { // Opens flash memory to load stored calibration values

@@ -19,8 +19,6 @@ class BnoSensor {
 
     bool begin();
     bool loadCalibration();
-    bool doCalibration();
-    bool saveCalibration();
     float getOrientationX();
     float getOrientationY();
     float getOrientationZ();
