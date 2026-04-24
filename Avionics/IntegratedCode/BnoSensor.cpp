@@ -46,6 +46,7 @@ bool BnoSensor::update(){
   imu::Vector<3> rawAccel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
   dt = (currentTime - lastTime) / 1000.0;
+  lastTime = currentTime;
 
   myOX = event.orientation.x, 4;
   myOY = event.orientation.y, 4;
@@ -59,8 +60,12 @@ bool BnoSensor::update(){
   gy = gyro.y();
   gz = gyro.z();
 
-  float rawAccelMag = sqrt(rawAccel.x() * rawAccel.x() + 
+  rawAccelMag = sqrt(rawAccel.x() * rawAccel.x() + 
   rawAccel.y() * rawAccel.y() + rawAccel.z() * rawAccel.z());
+
+  velX += ax * dt; 
+  velY += ay * dt;
+  velZ += az * dt;
 
   return true;
 }
