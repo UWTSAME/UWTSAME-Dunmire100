@@ -49,7 +49,7 @@ float Gps::getAlt(){
 }
 // put Leeah's code
 
-double Gps::getDistane(){
+double Gps::getDistance(){
   return getDistance(myLat, myLon, myInitialLat, myInitialLon);
 }
 
@@ -69,9 +69,11 @@ double Gps::getDistance(double lat1, double lon1, double lat2, double lon2){
 
   return R * c; //distance in meters
 }
+double Gps::getDirection(){
+  return getDirection(myLat, myLon, myInitialLat, myInitialLon);
+}
 
-float Gps::getDirection(){
-double calculateBearing(double lat1, double lon1, double lat2, double lon2){
+double Gps::getDirection(double lat1, double lon1, double lat2, double lon2){
   double latRad1 = radians(lat1);
   double latRad2 = radians(lat2);
   double deltaLon = radians(lon2 - lon1);
@@ -88,6 +90,3 @@ double calculateBearing(double lat1, double lon1, double lat2, double lon2){
 
   return bearing;
 }
-}
-
-

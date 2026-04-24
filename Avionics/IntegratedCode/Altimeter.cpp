@@ -1,4 +1,4 @@
-di#include "Altimeter.h"
+#include "Altimeter.h"
 
 Altimeter::Altimeter(float theSeaPressure): mySeaPressure(theSeaPressure), myInitialAlt(0){
 }

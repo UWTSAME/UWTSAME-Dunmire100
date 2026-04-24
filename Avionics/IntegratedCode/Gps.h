@@ -31,6 +31,7 @@ class Gps {
     double getDistance();
     double getDistance(double lat1, double lon1, double lat2, double lon2);
     double getDirection();
+    double getDirection(double lat1, double lon1, double lat2, double lon2);
 };
 
 #endif
