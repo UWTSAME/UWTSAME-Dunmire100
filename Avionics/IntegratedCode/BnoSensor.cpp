@@ -12,9 +12,10 @@ bool BnoSensor::begin(){
   myBno.setExtCrystalUse(true);
 
   delay(250);
-  return true;
 
   loadCalibration();
+  return true;
+
 }
 
 bool BnoSensor::loadCalibration() { // Opens flash memory to load stored calibration values
