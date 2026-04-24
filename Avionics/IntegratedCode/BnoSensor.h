@@ -15,7 +15,14 @@ class BnoSensor {
     float mOX = 0;
     float mOY = 0;
     float mOZ = 0;
-
+    float ax = 0;
+    float ay = 0;
+    float az = 0;
+    float gx = 0;
+    float gy = 0;
+    float gz = 0;
+    float dt = 0;
+    float rawAccelMag = 0;
 
 
 
