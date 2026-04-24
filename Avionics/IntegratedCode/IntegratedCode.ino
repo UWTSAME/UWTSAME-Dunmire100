@@ -29,9 +29,35 @@ void setup(){
 
   delay(2000); //Wait for Serial and Parts to boot up
 
+  
+}
+
+void loop(){
+  alt.update();
+  gps.update();
+
+  dataString = formDataString(dataString);
+
+  if(loopCount > 6){
+    if(sd.write(dataString)){
+      dataString = "";
+      loopCount = 0;
+    }
+  } else {
+    dataString += "\n";
+  }
+  
+  loopCount++;
+}
+
+void bootUp(){
+
+  //upon successful boot, displays successful LED
   alt.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
   theBno.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
   lora.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
+  gps.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
+  //If the SD card successfully sets up, displays succesful LED and writes the data headers.
   if(sd.begin()){
     flashLED(LED_VERIFY);
     sd.write("Time, Current Alt, Relative Alt, Temperature (C), Latitude,"
@@ -40,31 +66,7 @@ void setup(){
   } else {
     flashLED(LED_ALERT);
   }
-  gps.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
-}
-
-void loop(){
-  alt.update();
-  gps.update();
-
-  String newData = 
-        String(millis()) + "," + alt.getAlt() + "," + alt.getRelAlt() + "," + alt.getTempC() + "," + 
-        String(gps.getLat(), 6) + "," + String(gps.getLon(), 6) + "," + String(gps.getAlt(),6) +
-        "," + gps.getDistance() + "," + gps.getDirection() + "," + "lora.status()" + "," + 
-        theBno.getOrientationX() + "," + theBno.getOrientationY() + "," + theBno.getOrientationZ();
-   dataString += newData;
   
- if(loopCount > 6){
-    if(sd.write(dataString)){
-      dataString = "";
-    }
-    loopCount = 0;
- } else {
-    dataString += "\n";
- }
-
-   
-  loopCount++;
 }
 
 void flashLED(int pinNum){
@@ -74,6 +76,14 @@ void flashLED(int pinNum){
   delay(500);
 }
 
+String formDataString(String thePrevData){
+  String newData = 
+        String(millis()) + "," + alt.getAlt() + "," + alt.getRelAlt() + "," + alt.getTempC() + "," + 
+        String(gps.getLat(), 6) + "," + String(gps.getLon(), 6) + "," + String(gps.getAlt(),6) +
+        "," + gps.getDistance() + "," + gps.getDirection() + "," + "lora.status()" + "," + 
+        theBno.getOrientationX() + "," + theBno.getOrientationY() + "," + theBno.getOrientationZ();
+  return thePrevData+newData;
+}
 
 
 

@@ -48,8 +48,12 @@ float Gps::getAlt(){
   return myAlt;
 }
 // put Leeah's code
-float Gps::getDistance(){
- double calculateDistance(double lat1, double lon1, double lat2, double lon2){ 
+
+double Gps::getDistane(){
+  return getDistance(myLat, myLon, myInitialLat, myInitialLon);
+}
+
+double Gps::getDistance(double lat1, double lon1, double lat2, double lon2){
   const double R = 6371000; // Earth radius in meters
 
   double latRad1 = radians(lat1);
@@ -64,7 +68,6 @@ float Gps::getDistance(){
   double c = 2 * atan2(sqrt(a), sqrt(1-a));
 
   return R * c; //distance in meters
-}
 }
 
 float Gps::getDirection(){

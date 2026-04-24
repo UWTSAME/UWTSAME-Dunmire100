@@ -28,8 +28,9 @@ class Gps {
     float getLat();
     float getLon();
     float getAlt();
-    float getDistance();
-    float getDirection();
+    double getDistance();
+    double getDistance(double lat1, double lon1, double lat2, double lon2);
+    double getDirection();
 };
 
 #endif
