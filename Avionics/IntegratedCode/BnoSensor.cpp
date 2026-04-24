@@ -31,23 +31,28 @@ bool BnoSensor::loadCalibration() { // Opens flash memory to load stored calibra
   return false;
 }
 
-float BnoSensor::getOrientationX(){
+bool BnoSensor::update(){
   sensors_event_t event;
   myBno.getEvent(&event);
 
-  return event.orientation.x;
+  myOX = event.orientation.x, 4;
+  myOY = event.orientation.y, 4;
+  myOZ = event.orientation.z, 4;
+
+  return true;
+}
+
+float BnoSensor::getOrientationX(){
+  
+  return myOX;
 }
 
 float BnoSensor::getOrientationY(){
-  sensors_event_t event;
-  myBno.getEvent(&event);
-
-  return event.orientation.y;
+  
+  return myOY;
 }
 
 float BnoSensor::getOrientationZ(){
-  sensors_event_t event;
-  myBno.getEvent(&event);
-
-  return event.orientation.z;
+  
+  return myOZ;
 }

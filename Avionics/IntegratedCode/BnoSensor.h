@@ -12,6 +12,11 @@ class BnoSensor {
     const int TEMP_WARNING_C = 70;
     Adafruit_BNO055 myBno = Adafruit_BNO055(55);
     Preferences myPrefs;
+    float mOX = 0;
+    float mOY = 0;
+    float mOZ = 0;
+
+
 
 
   public:
@@ -19,6 +24,7 @@ class BnoSensor {
 
     bool begin();
     bool loadCalibration();
+    bool update();
     float getOrientationX();
     float getOrientationY();
     float getOrientationZ();
