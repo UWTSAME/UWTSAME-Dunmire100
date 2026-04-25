@@ -10,6 +10,7 @@
 class BnoSensor {
   private:
     const int TEMP_WARNING_C = 70;
+    const float alpha = 0.5f;
     Adafruit_BNO055 myBno = Adafruit_BNO055(55);
     Preferences myPrefs;
     float myOX = 0;
@@ -42,6 +43,7 @@ class BnoSensor {
     float getOrientationX();
     float getOrientationY();
     float getOrientationZ();
+    float getRawAccelMag();
     uint8_t status();
 };
 

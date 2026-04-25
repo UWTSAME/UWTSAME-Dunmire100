@@ -45,12 +45,13 @@ bool BnoSensor::update(){
   //Raw acceleration
   imu::Vector<3> rawAccel = myBno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
+  currentTime = millis();
   dt = (currentTime - lastTime) / 1000.0;
   lastTime = currentTime;
 
-  myOX = event.orientation.x
-  myOY = event.orientation.y
-  myOZ = event.orientation.z
+  myOX = event.orientation.x;
+  myOY = event.orientation.y;
+  myOZ = event.orientation.z;
 
   myAx = accel.x();
   myAy = accel.y();
@@ -64,13 +65,13 @@ bool BnoSensor::update(){
   rawAccel.y() * rawAccel.y() + rawAccel.z() * rawAccel.z());
 
   // For filtering linear acceleration values
-  myFilteredAx = alpha * ax + (1 - alpha) * filteredAx;
-  myFilteredAy = alpha * ay + (1 - alpha) * filteredAy;
-  myFilteredAz = alpha * az + (1 - alpha) * filteredAz;
+  myFilteredAx = alpha * myAx + (1 - alpha) * myFilteredAx;
+  myFilteredAy = alpha * myAy + (1 - alpha) * myFilteredAy;
+  myFilteredAz = alpha * myAz + (1 - alpha) * myFilteredAz;
 
-  myVelX += ax * dt; 
-  myVelY += ay * dt;
-  myVelZ += az * dt;
+  myVelX += myAx * dt;
+  myVelY += myAy * dt;
+  myVelZ += myAz * dt;
 
   return true;
 }
@@ -95,14 +96,18 @@ float BnoSensor::getAccelX() {
  return myAx;
 }
 
-float BnoSensor::getAccelX() {
+float BnoSensor::getAccelY() {
   
   return myAy;
 }
 
-float BnoSensor::getAccelX() {
+float BnoSensor::getAccelZ() {
   
   return myAz;
+}
+
+float BnoSensor::getRawAccelMag() {
+  return myRawAccelMag;
 }
 
 uint8_t BnoSensor::status(){
@@ -119,9 +124,9 @@ uint8_t BnoSensor::status(){
   uint8_t system_status = 0, self_test = 0, system_error = 0; 
   myBno.getSystemStatus(&system_status, &self_test, &system_error);
 
-  if(myBno.getTemp() > TEMP_WARNING_C) return 7;
-
   if (system_error != 0) return 1;
+
+  if(myBno.getTemp() > TEMP_WARNING_C) return 7;
 
   return system_status;
 
