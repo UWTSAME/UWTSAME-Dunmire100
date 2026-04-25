@@ -28,7 +28,7 @@ void setup(){
   pinMode(LED_ALERT, OUTPUT);
 
   delay(2000); //Wait for Serial and Parts to boot up
-
+  bootUp();
   
 }
 
@@ -53,18 +53,18 @@ void loop(){
 void bootUp(){
 
   //upon successful boot, displays successful LED
-  alt.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
-  theBno.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
-  lora.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
-  gps.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);
+  alt.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);       //starts altimiter
+  theBno.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);    //starts the bno
+  lora.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);      //starts the lora
+  gps.begin() ? flashLED(LED_VERIFY) : flashLED(LED_ALERT);       //starts the GPS
   //If the SD card successfully sets up, displays succesful LED and writes the data headers.
-  if(sd.begin()){
+  if(sd.begin()){                                                 //starts the SD card
     flashLED(LED_VERIFY);
     sd.write("Time, Current Alt, Relative Alt, Temperature (C), Latitude,"
               "Longitude, GPS Altitude, distance, direction, Lora Status, X Orientation, "
               "Y Orientation, Z orientation");
   } else {
-    flashLED(LED_ALERT);
+    flashLED(LED_ALERT);                          //tells if the SD card started properly
   }
   
 }
@@ -76,7 +76,7 @@ void flashLED(int pinNum){
   delay(500);
 }
 
-String formDataString(String thePrevData){
+String formDataString(String thePrevData){              //forms the message of all the data
   String newData = 
         String(millis()) + "," + alt.getAlt() + "," + alt.getRelAlt() + "," + alt.getTempC() + "," + 
         String(gps.getLat(), 6) + "," + String(gps.getLon(), 6) + "," + String(gps.getAlt(),6) +
