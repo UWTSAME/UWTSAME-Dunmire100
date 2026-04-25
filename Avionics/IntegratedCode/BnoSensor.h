@@ -21,7 +21,7 @@ class BnoSensor {
     float myGx = 0;
     float myGy = 0;
     float myGz = 0;
-    float dt = 0;
+   // float dt = 0;
     float myRawAccelMag = 0;
 
   public:
