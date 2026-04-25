@@ -15,10 +15,6 @@ bool BnoSensor::begin(){
 
   loadCalibration();
   return true;
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 }
 
 bool BnoSensor::loadCalibration() { // Opens flash memory to load stored calibration values
@@ -41,35 +37,35 @@ bool BnoSensor::update(){
   myBno.getEvent(&event);
 
   //Acceleration Vector
-  imu::Vector<3> accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  imu::Vector<3> accel = myBno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   //Gyroscope Vector
-  imu::Vector<3> gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  imu::Vector<3> gyro = myBno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
   //Raw acceleration
-  imu::Vector<3> rawAccel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  imu::Vector<3> rawAccel = myBno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
-  dt = (currentTime - lastTime) / 1000.0;
-  lastTime = currentTime;
+  //dt = (currentTime - lastTime) / 1000.0;
+ //lastTime = millis();
 
   myOX = event.orientation.x, 4;
   myOY = event.orientation.y, 4;
   myOZ = event.orientation.z, 4;
 
-  ax = accel.x();
-  ay = accel.y();
-  az = accel.z();
+  myAx = accel.x();
+  myAy = accel.y();
+  myAz = accel.z();
 
-  gx = gyro.x();
-  gy = gyro.y();
-  gz = gyro.z();
+  myGx = gyro.x();
+  myGy = gyro.y();
+  myGz = gyro.z();
 
-  rawAccelMag = sqrt(rawAccel.x() * rawAccel.x() + 
+  myRawAccelMag = sqrt(rawAccel.x() * rawAccel.x() + 
   rawAccel.y() * rawAccel.y() + rawAccel.z() * rawAccel.z());
 
-  velX += ax * dt; 
-  velY += ay * dt;
-  velZ += az * dt;
+  //velX += ax * dt; 
+  //velY += ay * dt;
+  //velZ += az * dt;
 
   return true;
 }
@@ -101,9 +97,9 @@ uint8_t BnoSensor::status(){
      7 = Temperature Problem
    */
   uint8_t system_status = 0, self_test = 0, system_error = 0; 
-  bno.getSystemStatus(&system_status, &self_test, &system_error);
+  myBno.getSystemStatus(&system_status, &self_test, &system_error);
 
-  if(bno.getTemp > TEMP_WARNING_C) system_status = 7;
+  if(myBno.getTemp() > TEMP_WARNING_C) system_status = 7;
 
   return system_status;
 
