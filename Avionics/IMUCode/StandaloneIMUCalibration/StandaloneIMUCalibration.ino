@@ -83,7 +83,7 @@ bool doCalibration() // For doing sensor calibration
     Serial.println(system);
     Serial.print("Gyro: "); // Leave sensor still for a bit
     Serial.println(gyro);
-    Serial.print("Accel: "); // Slowly tilt sensor in different directions
+    Serial.print("Accel: "); // VERY Slowly tilt sensor in different directions
     Serial.println(accel);
     Serial.print("Mag: "); // Slowly rotate sensor in a figure-8
     Serial.println(mag);
@@ -97,7 +97,7 @@ bool doCalibration() // For doing sensor calibration
             return true;
         }
 
-    // Times out if calibration takes longer than 90 seconds
+    // Times out if calibration takes longer than 150 seconds
     if (millis() - startTime > timeout) {
       Serial.println("Calibration timeout reached.");
       timedOut = true;
