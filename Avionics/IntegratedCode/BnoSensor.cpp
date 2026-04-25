@@ -48,9 +48,9 @@ bool BnoSensor::update(){
   dt = (currentTime - lastTime) / 1000.0;
   lastTime = currentTime;
 
-  myOX = event.orientation.x, 4;
-  myOY = event.orientation.y, 4;
-  myOZ = event.orientation.z, 4;
+  myOX = event.orientation.x;
+  myOY = event.orientation.y;
+  myOZ = event.orientation.z;
 
   myAx = accel.x();
   myAy = accel.y();
