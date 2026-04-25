@@ -24,8 +24,6 @@ class BnoSensor {
     float dt = 0;
     float rawAccelMag = 0;
 
-
-
   public:
     BnoSensor();
 
@@ -35,6 +33,7 @@ class BnoSensor {
     float getOrientationX();
     float getOrientationY();
     float getOrientationZ();
+    uint8_t status();
 };
 
 #endif

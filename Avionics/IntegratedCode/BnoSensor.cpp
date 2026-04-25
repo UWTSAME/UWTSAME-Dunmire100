@@ -15,7 +15,10 @@ bool BnoSensor::begin(){
 
   loadCalibration();
   return true;
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }
 
 bool BnoSensor::loadCalibration() { // Opens flash memory to load stored calibration values
@@ -84,4 +87,24 @@ float BnoSensor::getOrientationY(){
 float BnoSensor::getOrientationZ(){
   
   return myOZ;
+}
+
+uint8_t BnoSensor::status(){
+  /* System Status (see section 4.3.58)
+     0 = Idle
+     1 = System Error
+     2 = Initializing Peripherals
+     3 = System Iniitalization
+     4 = Executing Self-Test
+     5 = Sensor fusio algorithm running
+     6 = System running without fusion algorithms
+     7 = Temperature Problem
+   */
+  uint8_t system_status = 0, self_test = 0, system_error = 0; 
+  bno.getSystemStatus(&system_status, &self_test, &system_error);
+
+  if(bno.getTemp > TEMP_WARNING_C) system_status = 7;
+
+  return system_status;
+
 }

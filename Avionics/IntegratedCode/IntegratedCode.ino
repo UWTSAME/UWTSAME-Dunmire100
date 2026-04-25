@@ -28,8 +28,12 @@ void setup(){
   pinMode(LED_ALERT, OUTPUT);
 
   delay(2000); //Wait for Serial and Parts to boot up
+<<<<<<< Updated upstream
   bootUp();
   
+=======
+
+>>>>>>> Stashed changes
 }
 
 void loop(){
