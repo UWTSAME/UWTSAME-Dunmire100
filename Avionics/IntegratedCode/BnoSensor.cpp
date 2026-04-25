@@ -37,13 +37,13 @@ bool BnoSensor::update(){
   myBno.getEvent(&event);
 
   //Acceleration Vector
-  imu::Vector<3> accel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  imu::Vector<3> accel = myBno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
   //Gyroscope Vector
-  imu::Vector<3> gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  imu::Vector<3> gyro = myBno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
 
   //Raw acceleration
-  imu::Vector<3> rawAccel = bno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  imu::Vector<3> rawAccel = myBno.getVector(Adafruit_BNO055::VECTOR_ACCELEROMETER);
 
   dt = (currentTime - lastTime) / 1000.0;
   lastTime = currentTime;
@@ -51,10 +51,6 @@ bool BnoSensor::update(){
   myOX = event.orientation.x
   myOY = event.orientation.y
   myOZ = event.orientation.z
-
-  myOX = event.orientation.x;
-  myOY = event.orientation.y;
-  myOZ = event.orientation.z;
 
   myAx = accel.x();
   myAy = accel.y();

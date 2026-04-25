@@ -22,8 +22,6 @@ class BnoSensor {
     float myGy = 0;
     float myGz = 0;
 
-   // float dt = 0;
-
     float myVelX = 0;
     float myVelY = 0;
     float myVelZ = 0;
