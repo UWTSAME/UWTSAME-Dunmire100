@@ -119,7 +119,7 @@ uint8_t BnoSensor::status(){
   uint8_t system_status = 0, self_test = 0, system_error = 0; 
   myBno.getSystemStatus(&system_status, &self_test, &system_error);
 
-  if(bno.getTemp > TEMP_WARNING_C) return 7;
+  if(myBno.getTemp() > TEMP_WARNING_C) return 7;
 
   if (system_error != 0) return 1;
 
