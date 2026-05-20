@@ -1,12 +1,11 @@
 #define RX1 15 // RX Pin connected to LoRa TXD 
 #define TX1 4 // TX Pin connected to LoRa RXD
+unsigned long lastSendTime = 0; // Time value for loop send
 
 HardwareSerial LoraSerial(1); // UART1 port
 
 void setup() {
   Serial.begin(115200);
-
-  while (!Serial) delay(10); // Waits until serial monitor is ready
 
   // Start UART communication with LoRa
   LoraSerial.begin(115200, SERIAL_8N1, RX1, TX1);
@@ -17,9 +16,18 @@ void setup() {
 
 void loop() {
 
-  delay(3000);
+  // Prevent data being sent more than every 3 seconds
+  if (millis() - lastSendTime < 3000) return;
+  lastSendTime += 3000;
 
-  if (sendData("Hello")) { // Attempt to pass "Hello" into sendData
+  // Attempt to call "Hello" to sendData, it can be substituted
+  // by a string from the SD card
+  bool success = sendData("Hello");
+  if (!success) {
+    delay(200); // Resends if not gotten
+    success = sendData("Hello");
+  }
+    if (success) {
     Serial.println("Success");
   } else {
     Serial.println("Failure");
@@ -27,27 +35,41 @@ void loop() {
 }
 
 bool sendData(String theMessage) { // sendData function with theMessage string
-  Serial.println("Sending message: " + theMessage);
+  Serial.println("Sending message: " + theMessage); // Print message
   if (loraStatus()) { // If LoRa works
     // compiledMessage = AT+SEND=0,theMessage.length,theMessage
     String compiledMessage = "AT+SEND=0," + String(theMessage.length()) + "," + theMessage;
+    
     Serial.println("Command: " + compiledMessage);
     LoraSerial.println(compiledMessage); // Print to LoRa
 
-    delay(300);
+    unsigned long startTime = millis(); // Start timeout timer
 
-    while (LoraSerial.available()) { // While data is available
-      // Read characters until newline
-      String response = LoraSerial.readStringUntil('\n');
-      response.trim(); // Remove spaces
+    while (millis() - startTime < 1000) { // Wait up to 1 second
+      if (LoraSerial.available()) { // While data is available
+        // Read characters until newline
+        String response = LoraSerial.readStringUntil('\n');
+        response.trim(); // Remove spaces
 
-      Serial.print("Send response: ");
-      Serial.println(response); // Print response
+        Serial.print("Send response: ");
+        Serial.println(response); // Print response
+
+        // LoRa module acknowledged transmisison
+        if (response.indexOf("+OK") != -1) {
+          return true;
+        }
+
+        // Exit if LoRa says error
+        if (response.indexOf("+ERR") != -1) {
+          return false;
+        }
+      }
     }
-
-    Serial.println("It worked?"); // Debug message
-    return true;
+  // Nothing recieved from LoRa module in timeout window
+  Serial.println("Send timeout");
+  return false;
   }
+  // Transmission failed
   return false;
 }
 
@@ -58,7 +80,6 @@ bool loraStatus() { // Function checking LoRa status
 
   // While attempts are allowed and module not responding
   while (ATTEMPTS_ALLOWED > attempts && !statusGood) {
-
     // Increment attempts
     attempts++;
     Serial.print("Attempt: "); // Show # of attempts
@@ -81,7 +102,7 @@ bool loraStatus() { // Function checking LoRa status
       Serial.print("Module says: ");
       Serial.println(response); // Print response
 
-      // If LoRa responds with +OK, it is running well
+      // If LoRa module responds with +OK, it is running well
       if (response.indexOf("+OK") != -1) {
         statusGood = true;
       }
@@ -94,6 +115,6 @@ bool loraStatus() { // Function checking LoRa status
     if (!statusGood) { // Timeout warning
       Serial.println("LoRa module not responding");
     }
-
-    return statusGood;
+  // Otherwise it is running well
+  return statusGood;
   }
