@@ -30,8 +30,8 @@ class BnoSensor {
     float myFilteredAy = 0;
     float myFilteredAz = 0;
     float dt = 0;
-    float currentTime = 0;
-    float lastTime = 0;
+    unsigned long currentTime = 0;
+    unsigned long lastTime = 0;
     float myRawAccelMag = 0;
 
   public:

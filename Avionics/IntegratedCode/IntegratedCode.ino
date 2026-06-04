@@ -12,7 +12,7 @@
 #define LED_ALERT 26
 
 String dataString = "";
-int loopCount = 1;
+int loopCount = 0;
 const float SEA_LEVEL_PRESSURE_HPA = 1019.4;
 
 Altimeter alt(SEA_LEVEL_PRESSURE_HPA);
@@ -32,21 +32,22 @@ void setup(){
 }
 
 void loop(){
-  alt.update();
-  gps.update();
+  alt.update(); // Read altimeter data
+  gps.update(); // Read gps data
+  theBno.update(); // Read imu data
 
-  dataString = formDataString(dataString);
+  dataString = formDataString();
+
+  loopCount++;
 
   if(loopCount > 6){
-    if(sd.write(dataString)){
+    lora.sendData(dataString); // Send packet over Lora
+    if(sd.write(dataString)){ // Write packet to SD card
       dataString = "";
       loopCount = 0;
     }
-  } else {
-    dataString += "\n";
   }
-  
-  loopCount++;
+  delay(20); // 1000ms / 20ms = 50Hz rate
 }
 
 void bootUp(){
@@ -75,13 +76,22 @@ void flashLED(int pinNum){
   delay(500);
 }
 
-String formDataString(String thePrevData){              //forms the message of all the data
+String formDataString(){ // Form message from all the data       
   String newData = 
-        String(millis()) + "," + alt.getAlt() + "," + alt.getRelAlt() + "," + alt.getTempC() + "," + 
-        String(gps.getLat(), 6) + "," + String(gps.getLon(), 6) + "," + String(gps.getAlt(),6) +
-        "," + gps.getDistance() + "," + gps.getDirection() + "," + "lora.status()" + "," + 
-        theBno.getOrientationX() + "," + theBno.getOrientationY() + "," + theBno.getOrientationZ();
-  return thePrevData+newData;
+        String(millis()) + "," +
+        String(alt.getAlt()) + "," +
+        String(alt.getRelAlt()) + "," +
+        String(alt.getTempC()) + "," + 
+        String(gps.getLat(), 6) + "," +
+        String(gps.getLon(), 6) + "," +
+        String(gps.getAlt(), 6) + "," +
+        String(gps.getDistance()) + "," +
+        String(gps.getDirection()) + "," +
+        String(lora.status()) + "," + 
+        String(theBno.getOrientationX()) + "," +
+        String(theBno.getOrientationY()) + "," +
+        String(theBno.getOrientationZ());
+  return newData;
 }
 
 

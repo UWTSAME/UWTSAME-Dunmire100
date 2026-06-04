@@ -6,18 +6,19 @@ Gps::Gps(int theRX, int theTX) : GPSSerial(2), myRX(theRX), myTX(theTX){
 bool Gps::begin(){
   GPSSerial.begin(9600, SERIAL_8N1, myRX, myTX);
   delay(2000);
-  return (GPSSerial.available() > 0);
+  return true
 }
 
 void Gps::setFirst(){
   myInitialLon = myLon;
   myInitialLat = myLat;
   myInitialAlt = myAlt;
+  firstSet = true;
 }
 
 bool Gps::update(){
   bool updateSuccessful = false;
-  while(GPSSerial.available() != 0) {
+  while(GPSSerial.available()) {
     char gpsOutput = GPSSerial.read();
     if(myTinyGps.encode(gpsOutput)){
       if(myTinyGps.location.isValid() && myTinyGps.location.isUpdated()){
@@ -26,9 +27,7 @@ bool Gps::update(){
         myAlt = myTinyGps.altitude.meters();
         updateSuccessful = true;
         if(!firstSet){
-          for(int i = 0; i < BEGINNING_SAMPLE; i++){
-            setFirst();
-          }
+          setFirst();
         }
       }
     }

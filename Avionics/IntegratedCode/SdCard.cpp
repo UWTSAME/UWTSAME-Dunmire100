@@ -15,7 +15,7 @@ bool SdCard::begin(){
   if(testFile){
     testFile.println("Beginning Data:");
     testFile.close();
-    bool setupSuccessful = true;
+    setupSuccessful = true;
   }
   return setupSuccessful;
 }
