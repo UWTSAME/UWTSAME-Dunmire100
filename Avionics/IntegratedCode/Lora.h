@@ -8,6 +8,7 @@ class Lora {
     int myRX;
     int myTX;
     HardwareSerial LoraSerial;
+    unsigned long lastSendTime;
 
   public:
     Lora(int theRX, int theTX);
