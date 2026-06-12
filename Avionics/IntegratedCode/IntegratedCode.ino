@@ -37,11 +37,12 @@ void loop(){
   theBno.update(); // Read imu data
 
   dataString = formDataString();
+  String loraString = formLoraString();
 
   loopCount++;
 
   if(loopCount > 6){
-    lora.sendData(dataString); // Send packet over Lora
+    lora.sendData(loraString); // Send packet over Lora
     if(sd.write(dataString)){ // Write packet to SD card
       dataString = "";
       loopCount = 0;
@@ -94,6 +95,11 @@ String formDataString(){ // Form message from all the data
   return newData;
 }
 
+String formLoraString() {
+  return String(alt.getRelAlt(), 1) + "," +
+         String(gps.getLat(), 6) + "," +
+         String(gps.getLon(), 6);
+}
 
 
 

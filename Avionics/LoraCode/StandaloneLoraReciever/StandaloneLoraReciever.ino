@@ -1,4 +1,5 @@
-// barebones file for now
+#define RX1 15 // RX Pin connected to LoRa TXD 
+#define TX1 4 // TX Pin connected to LoRa RXD
 HardwareSerial LoraSerial(1);
 
 void setup() {
@@ -11,7 +12,8 @@ void loop() {
         String response = LoraSerial.readStringUntil('\n');
         response.trim(); 
         if (response.indexOf("+") != -1) {
-          Serial.println(response);
+            // Between second comma and last comma
+            Serial.println(response.substring(response.indexOf(',', response.indexOf(',') + 1) + 1, response.lastIndexOf(',')));
         }
     }
 }
